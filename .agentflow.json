@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "triggers": {
+    "onFileChange": {
+      "patterns": ["**/*.json"],
+      "exclude": ["node_modules/**", ".agentflow.json"]
+    }
+  },
+  "actions": {
+    "processJson": {
+      "agent": "json-processor",
+      "config": {
+        "validateSchema": true,
+        "autoFormat": true
+      }
+    }
+  },
+  "security": {
+    "allowedPaths": ["src/**", "data/**"],
+    "deniedPaths": ["node_modules/**", ".git/**"],
+    "maxFileSize": 5242880,
+    "rateLimit": {
+      "maxRequests": 100,
+      "perMinutes": 1
+    }
+  }
+}
