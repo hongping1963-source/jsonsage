@@ -1,11 +1,19 @@
-# JSON Agent Workflow
+# JsonSage
 
-这是一个自动化的JSON处理工作流系统，可以监控JSON文件的变化并自动运行处理agent。
+智能的JSON处理工作流系统，提供自动化监控、验证和转换功能。
+
+## 特性
+
+- 自动监控JSON文件变化
+- 智能JSON验证和格式化
+- 完整的指标收集和监控
+- 内置健康检查和错误处理
+- 高性能和可扩展性
 
 ## 项目结构
 
 ```
-json-agent-workflow/
+jsonsage/
 ├── .github/                 # GitHub配置目录
 │   └── workflows/          # GitHub Actions工作流配置
 │       ├── test-build.yml  # 测试和构建工作流
@@ -19,48 +27,29 @@ json-agent-workflow/
 ├── docs/                  # 文档目录
 │   ├── README.md          # 文档主页
 │   ├── api/              # API文档
-│   │   ├── README.md
-│   │   ├── core.md
-│   │   └── utils.md
 │   ├── development/      # 开发文档
-│   │   ├── README.md
-│   │   ├── setup.md
-│   │   ├── testing.md
-│   │   └── building.md
 │   ├── workflows/        # 工作流文档
-│   │   ├── README.md
-│   │   ├── test-build.md
-│   │   └── publish.md
 │   ├── configuration/    # 配置文档
-│   │   ├── README.md
-│   │   ├── agent-workflow.md
-│   │   └── security.md
 │   └── deployment/       # 部署文档
-│       ├── README.md
-│       ├── environment.md
-│       └── publishing.md
 ├── src/                  # 源代码目录
 │   ├── utils/           # 工具函数
-│   │   ├── logger.js
-│   │   ├── metrics.js
-│   │   └── healthCheck.js
+│   │   ├── logger.js    # 日志工具
+│   │   ├── metrics.js   # 指标收集
+│   │   └── healthCheck.js # 健康检查
 │   └── index.js         # 主入口文件
-├── .agentflow.json      # Agent工作流配置
-├── .babelrc             # Babel配置
-├── jest.config.js       # Jest测试配置
-├── jsdoc.json          # JSDoc文档生成配置
-└── package.json        # 项目配置
+├── .agentflow.json      # 工作流配置
+└── package.json         # 项目配置
 ```
 
 ## 快速开始
 
 1. 安装
 ```bash
-npm install json-agent-workflow
+npm install jsonsage
 ```
 
 2. 配置
-在你的项目根目录创建 `.agentflow.json` 文件：
+创建 `.agentflow.json` 文件：
 
 ```json
 {
@@ -84,11 +73,15 @@ npm install json-agent-workflow
 ```
 
 3. 使用
-```bash
-npm start
-```
+```javascript
+const JsonSage = require('jsonsage');
 
-系统会自动监控所有JSON文件的变化，并在文件被创建或修改时运行配置的处理agent。
+const sage = new JsonSage({
+  // 配置选项
+});
+
+sage.start();
+```
 
 ## 文档
 

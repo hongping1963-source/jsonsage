@@ -1,7 +1,7 @@
 {
-  "name": "json-agent-workflow",
+  "name": "jsonsage",
   "version": "1.0.0",
-  "description": "自动化的JSON处理工作流系统",
+  "description": "智能的JSON处理工作流系统，提供自动化监控、验证和转换功能",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
@@ -18,10 +18,21 @@
     "json",
     "workflow",
     "automation",
-    "agent"
+    "monitoring",
+    "validation",
+    "transformation",
+    "sage"
   ],
-  "author": "",
+  "author": "hongping1963-source",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hongping1963-source/jsonsage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hongping1963-source/jsonsage/issues"
+  },
+  "homepage": "https://github.com/hongping1963-source/jsonsage#readme",
   "dependencies": {
     "chokidar": "^3.5.3",
     "winston": "^3.8.2",
