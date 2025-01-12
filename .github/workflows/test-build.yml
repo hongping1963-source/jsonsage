@@ -1,11 +1,11 @@
-# 之前创建的test-build.yml内容
 name: Test and Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -33,6 +33,7 @@ jobs:
       run: npm test
     
     - name: Upload coverage reports
+      if: matrix.node-version == '18.x'
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
