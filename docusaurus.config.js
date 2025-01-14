@@ -10,13 +10,13 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://jsonsage.github.io',
+  url: 'https://hongping1963-source.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/jsonsage/',
 
   // GitHub pages deployment config.
-  organizationName: 'jsonsage', // Usually your GitHub org/user name.
+  organizationName: 'hongping1963-source', // Usually your GitHub org/user name.
   projectName: 'jsonsage', // Usually your repo name.
   trailingSlash: false,
 
@@ -114,7 +114,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} JsonSage. Built with Docusaurus.`,
+        copyright: `Copyright ${new Date().getFullYear()} JsonSage. Built with Docusaurus.`,
       },
       prism: {
         theme: themes.github,
