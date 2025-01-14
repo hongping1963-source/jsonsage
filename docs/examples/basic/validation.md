@@ -1,0 +1,242 @@
+# JSON数据验证示例
+
+本示例展示如何使用JsonSage进行JSON数据验证。
+
+## 基本验证
+
+### 简单类型验证
+
+```typescript
+import { JsonSage } from '@zhanghongping/json-sage-workflow';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    age: { type: 'number' },
+    email: { type: 'string', format: 'email' }
+  },
+  required: ['name', 'age']
+};
+
+const sage = new JsonSage();
+const result = await sage.validate('./user.json', schema);
+
+if (result.valid) {
+  console.log('验证通过');
+} else {
+  console.error('验证错误:', result.errors);
+}
+```
+
+### 数组验证
+
+```typescript
+const arraySchema = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' },
+      name: { type: 'string' }
+    },
+    required: ['id']
+  },
+  minItems: 1
+};
+
+const result = await sage.validate('./users.json', arraySchema);
+```
+
+## 高级验证
+
+### 自定义格式
+
+```typescript
+sage.addFormat('chinese-phone', {
+  validate: (phone) => /^1[3-9]\d{9}$/.test(phone),
+  errorMessage: '必须是有效的中国手机号码'
+});
+
+const schema = {
+  type: 'object',
+  properties: {
+    phone: { type: 'string', format: 'chinese-phone' }
+  }
+};
+```
+
+### 条件验证
+
+```typescript
+const schema = {
+  type: 'object',
+  properties: {
+    type: { type: 'string', enum: ['personal', 'business'] },
+    taxId: { type: 'string' }
+  },
+  required: ['type'],
+  if: {
+    properties: { type: { const: 'business' } }
+  },
+  then: {
+    required: ['taxId']
+  }
+};
+```
+
+## 批量验证
+
+```typescript
+async function validateMultipleFiles() {
+  const sage = new JsonSage();
+  
+  const results = await sage.validateBatch({
+    './users/*.json': userSchema,
+    './products/*.json': productSchema,
+    './orders/*.json': orderSchema
+  });
+
+  for (const [file, result] of Object.entries(results)) {
+    if (!result.valid) {
+      console.error(`文件 ${file} 验证失败:`, result.errors);
+    }
+  }
+}
+```
+
+## 实时验证
+
+```typescript
+const sage = new JsonSage({
+  watchPath: './data',
+  validateOnChange: true,
+  schemas: {
+    'users/*.json': userSchema,
+    'products/*.json': productSchema
+  }
+});
+
+sage.on('validationError', (error) => {
+  console.error('验证错误:', {
+    file: error.file,
+    errors: error.errors
+  });
+});
+
+sage.start();
+```
+
+## 完整示例
+
+```typescript
+import { JsonSage } from '@zhanghongping/json-sage-workflow';
+import * as fs from 'fs';
+
+async function setupValidation() {
+  // 创建验证器实例
+  const sage = new JsonSage({
+    watchPath: './data',
+    validateOnChange: true
+  });
+
+  // 添加自定义格式
+  sage.addFormat('chinese-phone', {
+    validate: (phone) => /^1[3-9]\d{9}$/.test(phone),
+    errorMessage: '必须是有效的中国手机号码'
+  });
+
+  // 定义用户模式
+  const userSchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'string', pattern: '^USER_\\d+$' },
+      name: { type: 'string', minLength: 2 },
+      age: { type: 'number', minimum: 0 },
+      email: { type: 'string', format: 'email' },
+      phone: { type: 'string', format: 'chinese-phone' },
+      address: {
+        type: 'object',
+        properties: {
+          street: { type: 'string' },
+          city: { type: 'string' },
+          country: { type: 'string' }
+        },
+        required: ['city', 'country']
+      }
+    },
+    required: ['id', 'name', 'email']
+  };
+
+  // 配置验证规则
+  sage.setSchemas({
+    'users/*.json': userSchema
+  });
+
+  // 监听验证事件
+  sage.on('validationError', (error) => {
+    console.error(`文件 ${error.file} 验证失败:`, error.errors);
+    // 发送通知或记录日志
+    notifyValidationError(error);
+  });
+
+  sage.on('validationSuccess', (file) => {
+    console.log(`文件 ${file} 验证通过`);
+  });
+
+  // 启动监控和验证
+  await sage.start();
+
+  return sage;
+}
+
+// 使用示例
+const userData = {
+  id: 'USER_001',
+  name: '张三',
+  age: 30,
+  email: 'zhangsan@example.com',
+  phone: '13912345678',
+  address: {
+    street: '中关村大街1号',
+    city: '北京',
+    country: '中国'
+  }
+};
+
+// 验证单个数据
+const sage = new JsonSage();
+const result = await sage.validateData(userData, userSchema);
+
+if (result.valid) {
+  console.log('数据验证通过');
+  await fs.promises.writeFile(
+    './data/users/USER_001.json',
+    JSON.stringify(userData, null, 2)
+  );
+} else {
+  console.error('数据验证失败:', result.errors);
+}
+```
+
+## 最佳实践
+
+1. **模式复用**
+   - 将常用的模式定义为常量
+   - 使用模式组合创建复杂验证规则
+
+2. **错误处理**
+   - 为每种错误类型定义清晰的错误消息
+   - 实现错误恢复机制
+
+3. **性能优化**
+   - 使用缓存避免重复验证
+   - 实现增量验证
+
+4. **可维护性**
+   - 将模式定义放在单独的文件中
+   - 使用注释说明验证规则的用途
+
+5. **监控和日志**
+   - 记录验证错误和性能指标
+   - 设置告警阈值
