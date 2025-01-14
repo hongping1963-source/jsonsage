@@ -1,354 +1,220 @@
-# API 参考
+# API 参考文档
 
-## JsonSage
+## JsonSage 类
 
 主类，提供所有核心功能。
 
 ### 构造函数
 
 ```typescript
-constructor(config?: JsonSageConfig)
+constructor(options?: JsonSageOptions)
 ```
 
 #### 参数
-- `config`: 可选的配置对象
 
-### 实例方法
+- `options` (可选): 配置选项
+  - `validateOnSave`: boolean - 保存时自动验证（默认：true）
+  - `maxFileSize`: number - 最大文件大小（字节）（默认：10MB）
+  - `aiModel`: string - AI 模型选择（默认：'deepseek'）
 
-#### start()
-启动监控系统。
-
-```typescript
-async start(): Promise<void>
-```
-
-#### stop()
-停止监控系统。
-
-```typescript
-async stop(): Promise<void>
-```
+### 核心方法
 
 #### validate()
-验证JSON数据。
+
+验证 JSON 数据的有效性。
 
 ```typescript
-async validate(
-  input: string | object,
-  schema: object
-): Promise<ValidationResult>
+async validate(data: any, schema?: JSONSchema): ValidationResult
 ```
 
+**参数:**
+- `data`: any - 要验证的数据
+- `schema` (可选): JSONSchema - 验证模式
+
+**返回值:**
+- `ValidationResult`: 验证结果对象
+  - `isValid`: boolean - 验证是否通过
+  - `errors`: ValidationError[] - 错误列表
+
 #### transform()
-转换JSON数据。
+
+转换数据格式。
 
 ```typescript
 async transform(
-  input: string | object,
-  rules: TransformationRules
-): Promise<TransformResult>
+  data: string | object,
+  options: TransformOptions
+): Promise<object>
 ```
 
+**参数:**
+- `data`: string | object - 源数据
+- `options`: TransformOptions
+  - `sourceFormat`: string - 源格式（'csv'|'xml'|'yaml'|'json'）
+  - `targetFormat`: string - 目标格式（默认：'json'）
+  - `config`: object - 转换配置
+
+**返回值:**
+- 转换后的 JSON 对象
+
+#### analyze()
+
+分析 JSON 数据结构。
+
+```typescript
+analyze(data: object): AnalysisResult
+```
+
+**参数:**
+- `data`: object - 要分析的 JSON 数据
+
+**返回值:**
+- `AnalysisResult`: 分析结果
+  - `structure`: object - 数据结构
+  - `stats`: object - 统计信息
+  - `suggestions`: string[] - 优化建议
+
+### 事件处理
+
 #### on()
+
 注册事件监听器。
 
 ```typescript
-on(
-  event: string,
-  listener: (data: any) => void
-): void
+on(event: string, handler: Function): void
 ```
 
-#### off()
-移除事件监听器。
+**支持的事件:**
+- `'validate'`: 验证完成
+- `'transform'`: 转换完成
+- `'error'`: 发生错误
+- `'ready'`: 系统就绪
+
+### 工具方法
+
+#### prettify()
+
+美化 JSON 数据。
 
 ```typescript
-off(
-  event: string,
-  listener: (data: any) => void
-): void
+prettify(data: object, options?: PrettifyOptions): string
 ```
 
-### 静态方法
+#### minify()
 
-#### isValidJson()
-检查字符串是否为有效的JSON。
+压缩 JSON 数据。
 
 ```typescript
-static isValidJson(str: string): boolean
+minify(data: object | string): string
 ```
 
-## 配置接口
+#### diff()
 
-### JsonSageConfig
-
-```typescript
-interface JsonSageConfig {
-  // 文件监控
-  watchPath?: string | string[];
-  patterns?: string | string[];
-  exclude?: string[];
-  
-  // 验证
-  validateOnChange?: boolean;
-  schemas?: Record<string, any>;
-  
-  // 转换
-  transformOnChange?: boolean;
-  transformRules?: Record<string, any>;
-  
-  // 性能
-  enablePerformanceMonitoring?: boolean;
-  performanceConfig?: {
-    sampleRate?: number;
-    metricsInterval?: number;
-    thresholds?: {
-      duration?: number;
-      memory?: number;
-    };
-  };
-  
-  // 缓存
-  cache?: {
-    enabled: boolean;
-    maxSize?: number;
-    ttl?: number;
-  };
-  
-  // 错误处理
-  errorHandling?: {
-    retryOnFailure?: boolean;
-    maxRetries?: number;
-    logErrors?: boolean;
-  };
-}
-```
-
-## 事件
-
-### fileChange
-当监控的文件发生变化时触发。
+比较两个 JSON 对象的差异。
 
 ```typescript
-interface FileChangeEvent {
-  type: 'add' | 'change' | 'unlink';
-  path: string;
-  timestamp: number;
-}
-```
-
-### validationError
-当验证失败时触发。
-
-```typescript
-interface ValidationError {
-  file: string;
-  errors: any[];
-  schema: any;
-}
-```
-
-### transformError
-当转换失败时触发。
-
-```typescript
-interface TransformError {
-  file: string;
-  error: Error;
-  source: any;
-}
-```
-
-### performanceMetric
-当收集到性能指标时触发。
-
-```typescript
-interface PerformanceMetric {
-  operation: string;
-  duration: number;
-  memoryUsage: number;
-  timestamp: number;
-}
-```
-
-## 错误类型
-
-### ValidationError
-验证错误。
-
-```typescript
-class ValidationError extends Error {
-  constructor(
-    message: string,
-    public details: any[],
-    public path: string
-  );
-}
-```
-
-### TransformationError
-转换错误。
-
-```typescript
-class TransformationError extends Error {
-  constructor(
-    message: string,
-    public source: any,
-    public target: any
-  );
-}
-```
-
-### FileOperationError
-文件操作错误。
-
-```typescript
-class FileOperationError extends Error {
-  constructor(
-    message: string,
-    public operation: string,
-    public path: string
-  );
-}
-```
-
-## 工具函数
-
-### formatJson()
-格式化JSON字符串。
-
-```typescript
-function formatJson(
-  json: string,
-  indent: number = 2
-): string
-```
-
-### parseJson()
-安全地解析JSON字符串。
-
-```typescript
-function parseJson(
-  json: string,
-  reviver?: (key: any, value: any) => any
-): any
-```
-
-### validateSchema()
-验证JSON Schema的有效性。
-
-```typescript
-function validateSchema(
-  schema: object
-): boolean
-```
-
-## 常量
-
-### 默认配置
-
-```typescript
-const DEFAULT_CONFIG: Partial<JsonSageConfig> = {
-  patterns: ['**/*.json'],
-  exclude: ['**/node_modules/**'],
-  validateOnChange: false,
-  transformOnChange: false,
-  enablePerformanceMonitoring: false,
-  cache: {
-    enabled: true,
-    maxSize: 1000,
-    ttl: 3600000
-  }
-};
-```
-
-### 事件类型
-
-```typescript
-const EventTypes = {
-  FILE_CHANGE: 'fileChange',
-  VALIDATION_ERROR: 'validationError',
-  TRANSFORM_ERROR: 'transformError',
-  PERFORMANCE_METRIC: 'performanceMetric'
-} as const;
+diff(obj1: object, obj2: object): DiffResult
 ```
 
 ## 类型定义
+
+### JsonSageOptions
+
+```typescript
+interface JsonSageOptions {
+  validateOnSave?: boolean;
+  maxFileSize?: number;
+  aiModel?: string;
+  plugins?: Plugin[];
+}
+```
 
 ### ValidationResult
 
 ```typescript
 interface ValidationResult {
-  valid: boolean;
-  errors?: any[];
-  path?: string;
+  isValid: boolean;
+  errors: ValidationError[];
+  warnings: ValidationWarning[];
 }
 ```
 
-### TransformResult
+### TransformOptions
 
 ```typescript
-interface TransformResult {
-  success: boolean;
-  data?: any;
-  error?: Error;
-}
-```
-
-### PerformanceConfig
-
-```typescript
-interface PerformanceConfig {
-  sampleRate?: number;
-  metricsInterval?: number;
-  thresholds?: {
-    duration?: number;
-    memory?: number;
+interface TransformOptions {
+  sourceFormat: 'csv' | 'xml' | 'yaml' | 'json';
+  targetFormat?: 'json';
+  config?: {
+    delimiter?: string;
+    headers?: string[];
+    encoding?: string;
   };
 }
 ```
 
+## 错误处理
+
+所有方法都会在发生错误时抛出 `JsonSageError`：
+
+```typescript
+class JsonSageError extends Error {
+  constructor(message: string, code: string, details?: any);
+}
+```
+
+## 最佳实践
+
+1. 始终使用 `try-catch` 块处理可能的错误
+2. 在处理大文件时使用流式 API
+3. 使用类型定义获得更好的开发体验
+4. 注册错误事件处理器及时捕获问题
+
 ## 示例
 
-### 基本用法
+### 基础验证
 
 ```typescript
-import { JsonSage } from '@zhanghongping/json-sage-workflow';
+try {
+  const sage = new JsonSage();
+  const result = await sage.validate({
+    name: "John",
+    age: 30
+  });
+  
+  if (!result.isValid) {
+    console.error("验证失败:", result.errors);
+  }
+} catch (error) {
+  console.error("处理错误:", error);
+}
+```
 
-const sage = new JsonSage({
-  watchPath: './data',
-  validateOnChange: true
+### 格式转换
+
+```typescript
+const sage = new JsonSage();
+
+// CSV 转 JSON
+const csvData = `name,age\nJohn,30`;
+const jsonData = await sage.transform(csvData, {
+  sourceFormat: 'csv',
+  config: {
+    delimiter: ',',
+    headers: ['name', 'age']
+  }
+});
+```
+
+### 事件监听
+
+```typescript
+const sage = new JsonSage();
+
+sage.on('error', (error) => {
+  console.error('发生错误:', error);
 });
 
-sage.on('validationError', (error) => {
-  console.error('验证错误:', error);
+sage.on('validate', (result) => {
+  console.log('验证完成:', result);
 });
-
-await sage.start();
-```
-
-### 自定义验证
-
-```typescript
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' }
-  },
-  required: ['name']
-};
-
-const result = await sage.validate('./user.json', schema);
-```
-
-### 数据转换
-
-```typescript
-const rules = {
-  'name': 'userName',
-  'age': (value) => Number(value)
-};
-
-const result = await sage.transform('./data.json', rules);
-```

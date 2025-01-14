@@ -2,50 +2,208 @@
 
 本示例展示如何使用JsonSage进行JSON数据验证。
 
-## 基本验证
+## 基础验证
 
 ### 简单类型验证
 
-```typescript
-import { JsonSage } from '@zhanghongping/json-sage-workflow';
+最基本的验证是检查数据类型和必填字段：
 
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' },
-    email: { type: 'string', format: 'email' }
-  },
-  required: ['name', 'age']
-};
+```typescript
+import { JsonSage } from 'jsonsage';
 
 const sage = new JsonSage();
-const result = await sage.validate('./user.json', schema);
 
-if (result.valid) {
-  console.log('验证通过');
+// 要验证的数据
+const data = {
+  name: "John Doe",
+  age: 30,
+  email: "john@example.com",
+  isActive: true
+};
+
+// 验证数据
+const result = await sage.validate(data);
+
+if (result.isValid) {
+  console.log("数据验证通过");
 } else {
-  console.error('验证错误:', result.errors);
+  console.error("验证失败:", result.errors);
 }
+```
+
+### 使用 Schema 验证
+
+使用 JSON Schema 进行更复杂的验证：
+
+```typescript
+const userSchema = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      minLength: 2,
+      maxLength: 50
+    },
+    age: {
+      type: "number",
+      minimum: 0,
+      maximum: 120
+    },
+    email: {
+      type: "string",
+      format: "email"
+    },
+    isActive: {
+      type: "boolean"
+    }
+  },
+  required: ["name", "email"]
+};
+
+const result = await sage.validate(data, userSchema);
+```
+
+### 自定义验证规则
+
+添加自定义验证规则：
+
+```typescript
+const customSchema = {
+  type: "object",
+  properties: {
+    password: {
+      type: "string",
+      minLength: 8,
+      pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"
+    },
+    confirmPassword: {
+      type: "string"
+    }
+  },
+  required: ["password", "confirmPassword"],
+  custom: {
+    passwordMatch: (data) => {
+      return data.password === data.confirmPassword;
+    }
+  }
+};
+
+const userData = {
+  password: "Password123",
+  confirmPassword: "Password123"
+};
+
+const result = await sage.validate(userData, customSchema);
 ```
 
 ### 数组验证
 
+验证数组类型的数据：
+
 ```typescript
 const arraySchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
-      id: { type: 'number' },
-      name: { type: 'string' }
+      id: { type: "number" },
+      name: { type: "string" }
     },
-    required: ['id']
+    required: ["id", "name"]
   },
-  minItems: 1
+  minItems: 1,
+  maxItems: 10
 };
 
-const result = await sage.validate('./users.json', arraySchema);
+const users = [
+  { id: 1, name: "John" },
+  { id: 2, name: "Jane" }
+];
+
+const result = await sage.validate(users, arraySchema);
+```
+
+### 嵌套对象验证
+
+验证复杂的嵌套对象：
+
+```typescript
+const nestedSchema = {
+  type: "object",
+  properties: {
+    user: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        address: {
+          type: "object",
+          properties: {
+            street: { type: "string" },
+            city: { type: "string" },
+            country: { type: "string" }
+          },
+          required: ["street", "city"]
+        }
+      },
+      required: ["name", "address"]
+    }
+  }
+};
+
+const nestedData = {
+  user: {
+    name: "John Doe",
+    address: {
+      street: "123 Main St",
+      city: "New York",
+      country: "USA"
+    }
+  }
+};
+
+const result = await sage.validate(nestedData, nestedSchema);
+```
+
+### 错误处理
+
+处理验证错误：
+
+```typescript
+try {
+  const result = await sage.validate(data, schema);
+  
+  if (!result.isValid) {
+    result.errors.forEach(error => {
+      console.error(`错误路径: ${error.path}`);
+      console.error(`错误消息: ${error.message}`);
+      console.error(`错误类型: ${error.type}`);
+    });
+  }
+} catch (error) {
+  console.error("验证过程出错:", error);
+}
+```
+
+### 使用 AI 辅助验证
+
+JsonSage 的 AI 功能可以帮助你识别潜在的数据问题：
+
+```typescript
+// 启用 AI 验证
+const sage = new JsonSage({
+  aiModel: 'deepseek'
+});
+
+// AI 会分析数据并提供建议
+const result = await sage.validate(data, {
+  enableAI: true,
+  aiSuggestions: true
+});
+
+// 查看 AI 建议
+if (result.suggestions) {
+  console.log("AI 建议:", result.suggestions);
+}
 ```
 
 ## 高级验证

@@ -2,54 +2,85 @@
 sidebar_position: 1
 ---
 
-# JsonSage 介绍
+# JsonSage 快速入门
 
-:::info 更新时间
-最后更新：2025年1月14日
-:::
+欢迎使用 JsonSage！这是一个智能的 JSON 处理工作流系统，它能帮助你轻松处理、验证和转换 JSON 数据。
 
-JsonSage 是一个智能的 JSON 处理工作流系统，旨在简化 JSON 数据的验证、转换和监控过程。
+## 特性
 
-## 主要特性
-
-- **自动化监控**：实时监控 JSON 文件变化，自动触发工作流
-- **智能验证**：基于规则和模式的 JSON 数据验证
-- **灵活转换**：强大的 JSON 数据转换和处理能力
-- **性能优化**：高效处理大规模 JSON 数据
-- **可扩展性**：支持自定义插件和工作流
+- 🔍 **智能验证** - 使用 AI 驱动的验证规则，自动检测数据问题
+- 🔄 **自动转换** - 智能转换各种格式的数据为标准 JSON
+- 📊 **数据分析** - 深入分析 JSON 数据结构和内容
+- 🤖 **AI 助手** - 内置 DeepSeek AI 助手，帮助解答问题
+- 📈 **性能监控** - 实时监控数据处理性能
+- 🔒 **安全可靠** - 企业级的数据安全保护
 
 ## 快速开始
 
 ### 安装
 
-使用 npm 安装 JsonSage：
-
 ```bash
 npm install jsonsage
 ```
 
-### 基本使用
+### 基础使用
 
-```typescript
-import { JsonSage } from 'jsonsage';
+```javascript
+const { JsonSage } = require('jsonsage');
 
 // 创建实例
-const jsonsage = new JsonSage();
+const sage = new JsonSage();
 
-// 添加监控
-jsonsage.monitor('./data', {
-  pattern: '*.json',
-  onChange: (file) => {
-    console.log(`文件 ${file} 已更新`);
-  }
+// 验证 JSON 数据
+const result = await sage.validate({
+  name: "John",
+  age: 30,
+  email: "john@example.com"
 });
 
-// 启动监控
-jsonsage.start();
+// 检查验证结果
+if (result.isValid) {
+  console.log("数据验证通过！");
+} else {
+  console.log("验证失败：", result.errors);
+}
 ```
+
+### 数据转换
+
+```javascript
+// 从其他格式转换为 JSON
+const csvData = `name,age,email
+John,30,john@example.com`;
+
+const jsonData = await sage.transform(csvData, {
+  sourceFormat: 'csv',
+  targetFormat: 'json'
+});
+```
+
+### 使用 AI 助手
+
+JsonSage 内置了强大的 DeepSeek AI 助手，可以帮助你：
+
+- 解答 JSON 相关问题
+- 提供最佳实践建议
+- 帮助调试问题
+- 生成示例代码
 
 ## 下一步
 
-- [查看 API 文档](/api/introduction)
-- [浏览示例](/examples/basic/file-monitoring)
-- [了解最佳实践](/best-practices)
+- 查看 [API 参考文档](/docs/api/reference) 了解更多功能
+- 浏览 [示例集合](/docs/examples/basic/validation) 学习常见用法
+- 阅读 [高级特性](/docs/examples/advanced/custom-validation) 深入了解
+
+## 获取帮助
+
+- 使用内置的 DeepSeek AI 助手
+- 查看 [常见问题解答](/docs/faq)
+- 在 [GitHub](https://github.com/hongping1963-source/jsonsage) 上提交 Issue
+- 加入我们的 [社区讨论](https://github.com/hongping1963-source/jsonsage/discussions)
+
+## 贡献代码
+
+我们欢迎社区贡献！请查看我们的 [贡献指南](https://github.com/hongping1963-source/jsonsage/blob/main/CONTRIBUTING.md) 了解如何参与项目开发。
