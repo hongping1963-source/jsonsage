@@ -16,9 +16,16 @@ const config = {
   baseUrl: '/jsonsage/',
 
   // GitHub pages deployment config.
+  // If you aren't using GitHub pages, you don't need these.
   organizationName: 'hongping1963-source', // Usually your GitHub org/user name.
   projectName: 'jsonsage', // Usually your repo name.
+  deploymentBranch: 'gh-pages',
   trailingSlash: false,
+
+  // Add this line to use SSH
+  githubHost: 'github.com',
+  githubPort: '22',
+  githubProtocol: 'ssh',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
