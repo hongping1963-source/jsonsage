@@ -44,7 +44,7 @@ const config = {
         blog: {
           showReadingTime: true,
           editUrl:
-            'https://github.com/jsonsage/jsonsage/tree/main/',
+            'https://github.com/hongping1963-source/jsonsage/tree/main/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
