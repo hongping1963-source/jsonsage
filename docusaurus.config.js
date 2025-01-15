@@ -22,10 +22,10 @@ const config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
-  // Add this line to use SSH
-  githubHost: 'github.com',
-  githubPort: '22',
-  githubProtocol: 'ssh',
+  // Remove SSH configuration as it's not needed
+  // githubHost: 'github.com',
+  // githubPort: '22',
+  // githubProtocol: 'ssh',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

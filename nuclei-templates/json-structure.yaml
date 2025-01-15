@@ -1,0 +1,26 @@
+id: json-structure-validation
+info:
+  name: JSON Structure Validation
+  author: jsonsage
+  severity: info
+  description: Validates JSON structure and identifies potential issues
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "application/json"
+        part: header
+      - type: status
+        status:
+          - 200
+    extractors:
+      - type: json
+        name: structure
+        part: body
+        json:
+          - '.[] | keys'
