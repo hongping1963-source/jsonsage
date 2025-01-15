@@ -94,6 +94,6 @@ https://github.com/hongping1963-source/jsonsage/issues
 
 ### 在哪里可以获取帮助？
 
-- [文档中心](/docs/intro)
+- [文档中心](/intro)
 - [GitHub Discussions](https://github.com/hongping1963-source/jsonsage/discussions)
 - [示例代码](/examples/basic)
