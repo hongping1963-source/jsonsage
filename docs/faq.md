@@ -27,6 +27,7 @@ JsonSage 支持 Node.js 14.x 及以上版本。
 ### JsonSage 支持哪些数据格式？
 
 JsonSage 主要处理 JSON 数据，但也支持：
+
 - YAML
 - XML
 - CSV
@@ -47,18 +48,16 @@ stream.on('data', chunk => {
 
 ### 如何自定义验证规则？
 
-可以通过配置选项或继承 `ValidationRule` 类来创建自定义规则：
+可以通过配置选项或继承 ValidationRule 类来创建自定义规则：
 
 ```javascript
 const sage = new JsonSage({
   rules: {
     customRule: {
-      validate: (value) => {
-        return {
-          isValid: true,
-          errors: []
-        };
-      }
+      validate: (value) => ({
+        isValid: true,
+        errors: []
+      })
     }
   }
 });
@@ -69,12 +68,13 @@ const sage = new JsonSage({
 ### JsonSage 的性能如何？
 
 JsonSage 采用了多项优化措施：
+
 - 缓存机制
 - 并行处理
 - 惰性加载
 - 流式处理
 
-对于普通大小的 JSON 文件（<10MB），处理时间通常在毫秒级别。
+对于普通大小的 JSON 文件（小于10MB），处理时间通常在毫秒级别。
 
 ### 如何提高处理性能？
 
