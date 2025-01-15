@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hongping1963-source.github.io/jsonsage/sitemap.xml
+
+# Allow crawling of all content
+User-agent: *
+Disallow: /search
+Disallow: /docs/-
+Disallow: /blog/-
+
+# Allow all crawlers
+User-agent: *
+Crawl-delay: 10
