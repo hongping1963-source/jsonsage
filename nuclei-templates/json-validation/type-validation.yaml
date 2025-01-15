@@ -1,0 +1,37 @@
+id: json-type-validation
+info:
+  name: JSON Type Validation
+  author: jsonsage
+  severity: medium
+  description: Validates JSON data types and identifies type mismatches
+  tags: json, validation, type
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "application/json"
+      - type: status
+        status:
+          - 200
+    extractors:
+      - type: json
+        name: type_validation
+        json:
+          - '.'
+        internal: true
+    validate:
+      - type: format
+        part: body
+        format: json
+        internal: true
+      - type: dsl
+        condition: |
+          contains(type_validation, "null") || 
+          contains(type_validation, "undefined") || 
+          contains(type_validation, "NaN")

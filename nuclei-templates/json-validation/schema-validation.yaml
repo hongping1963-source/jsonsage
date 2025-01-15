@@ -1,0 +1,34 @@
+id: json-schema-validation
+info:
+  name: JSON Schema Validation
+  author: jsonsage
+  severity: info
+  description: Validates JSON against a predefined schema
+  tags: json, validation, schema
+
+variables:
+  schema_file: "{{.schema_file}}"
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "application/json"
+      - type: status
+        status:
+          - 200
+    extractors:
+      - type: json
+        name: schema_validation
+        json:
+          - '.'
+        internal: true
+    validate:
+      - type: json-schema
+        schema: "{{schema_file}}"
+        stop-at-first-match: false

@@ -1,0 +1,36 @@
+id: json-array-validation
+info:
+  name: JSON Array Validation
+  author: jsonsage
+  severity: low
+  description: Validates JSON array structures and identifies potential issues
+  tags: json, validation, array
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "application/json"
+      - type: status
+        status:
+          - 200
+    extractors:
+      - type: json
+        name: array_validation
+        json:
+          - '$[*]'
+        internal: true
+    validate:
+      - type: size
+        part: body
+        condition: ">0"
+        internal: true
+      - type: format
+        part: body
+        format: array
+        internal: true

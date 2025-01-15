@@ -1,0 +1,50 @@
+id: json-security-validation
+info:
+  name: JSON Security Validation
+  author: jsonsage
+  severity: high
+  description: Checks for common security issues in JSON data
+  tags: json, security, validation
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "application/json"
+      - type: status
+        status:
+          - 200
+    extractors:
+      - type: json
+        name: security_validation
+        json:
+          - '.'
+        internal: true
+    validate:
+      - type: regex
+        regex:
+          - "password"
+          - "api[_-]?key"
+          - "secret"
+          - "token"
+          - "auth"
+        condition: or
+        part: body
+      - type: size
+        part: body
+        condition: "<10000000"  # Check for large payloads
+        internal: true
+    matchers:
+      - type: word
+        words:
+          - "error"
+          - "exception"
+          - "stack"
+          - "trace"
+        condition: or
+        part: body
