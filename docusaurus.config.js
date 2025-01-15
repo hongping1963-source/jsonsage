@@ -45,6 +45,7 @@ const config = {
           showReadingTime: true,
           editUrl:
             'https://github.com/hongping1963-source/jsonsage/tree/main/',
+          onUntruncatedBlogPosts: 'ignore'
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
