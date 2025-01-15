@@ -121,6 +121,7 @@ const config = {
         theme: themes.github,
         darkTheme: themes.dracula,
       },
+      ssr: false,
     }),
 };
 
