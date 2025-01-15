@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
@@ -46,8 +44,10 @@ jobs:
           echo "Build complete. Contents of build directory:"
           ls -la build/
 
+      # Note: this is the key step for deployment
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'  # only deploy from main branch
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
