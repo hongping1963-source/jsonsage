@@ -70,14 +70,14 @@ JsonSage 内置了强大的 DeepSeek AI 助手，可以帮助你：
 
 ## 下一步
 
-- 查看 [API 参考文档](/docs/api/reference) 了解更多功能
-- 浏览 [示例集合](/docs/examples/basic/validation) 学习常见用法
-- 阅读 [高级特性](/docs/examples/advanced/custom-validation) 深入了解
+- 查看 [API 文档](/api/core) 了解更多功能
+- 浏览 [基础示例](/examples/basic) 学习常见用法
+- 阅读 [高级示例](/examples/advanced) 深入了解
 
 ## 获取帮助
 
 - 使用内置的 DeepSeek AI 助手
-- 查看 [常见问题解答](/docs/faq)
+- 查看 [常见问题](/faq)
 - 在 [GitHub](https://github.com/hongping1963-source/jsonsage) 上提交 Issue
 - 加入我们的 [社区讨论](https://github.com/hongping1963-source/jsonsage/discussions)
 
